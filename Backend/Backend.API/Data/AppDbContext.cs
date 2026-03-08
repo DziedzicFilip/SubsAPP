@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Backend.API.Models;
+using Backend.API.Models.Entities;
 
 namespace Backend.API.Data
 {
