@@ -7,13 +7,24 @@ namespace Backend.API.Data
     public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
+        {}
+            public DbSet<Group> Groups { get; set; }
+            public DbSet<UserGroup> UserGroups { get; set; }
+            public DbSet<Schedule> Schedules { get; set; }
+            public DbSet<Substitution> Substitutions { get; set; }
+            public DbSet<SubstitutionGroup> SubstitutionGroups { get; set; }
+            public DbSet<SubstitutionNotification> SubstitutionNotifications { get; set; }
+            public DbSet<SubstitutionTaken> SubstitutionTakens { get; set; }
+            public DbSet<Overtime> Overtimes { get; set;}
+            public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+            public DbSet<User> Users { get; set; }
+
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // UserGroup
+            
             modelBuilder.Entity<UserGroup>()
                 .HasOne(ug => ug.User)
                 .WithMany(u => u.UserGroups)
@@ -24,7 +35,7 @@ namespace Backend.API.Data
                 .WithMany(g => g.UserGroups)
                 .HasForeignKey(ug => ug.GroupId);
 
-            // Schedule
+      
             modelBuilder.Entity<Schedule>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.Schedules)
@@ -35,13 +46,13 @@ namespace Backend.API.Data
                 .WithMany(g => g.Schedules)
                 .HasForeignKey(s => s.GroupId);
 
-            // Substitution
+            
             modelBuilder.Entity<Substitution>()
                 .HasOne(s => s.CreatedByUser)
                 .WithMany()
                 .HasForeignKey(s => s.CreatedByUserId);
 
-            // SubstitutionGroup
+            
             modelBuilder.Entity<SubstitutionGroup>()
                 .HasOne(sg => sg.Substitution)
                 .WithMany(s => s.SubstitutionGroups)
@@ -52,7 +63,7 @@ namespace Backend.API.Data
                 .WithMany(g => g.SubstitutionGroups)
                 .HasForeignKey(sg => sg.GroupId);
 
-            // SubstitutionNotification
+            
             modelBuilder.Entity<SubstitutionNotification>()
                 .HasOne(sn => sn.Substitution)
                 .WithMany(s => s.SubstitutionNotifications)
@@ -61,9 +72,10 @@ namespace Backend.API.Data
             modelBuilder.Entity<SubstitutionNotification>()
                 .HasOne(sn => sn.User)
                 .WithMany(u => u.SubstitutionNotifications)
-                .HasForeignKey(sn => sn.UserId);
+                .HasForeignKey(sn => sn.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // SubstitutionTaken
+            
             modelBuilder.Entity<SubstitutionTaken>()
                 .HasOne(st => st.Substitution)
                 .WithMany(s => s.SubstitutionTakens)
@@ -72,18 +84,21 @@ namespace Backend.API.Data
             modelBuilder.Entity<SubstitutionTaken>()
                 .HasOne(st => st.TakenByUser)
                 .WithMany(u => u.SubstitutionTakens)
-                .HasForeignKey(st => st.TakenByUserId);
+                .HasForeignKey(st => st.TakenByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // Overtime
+          
             modelBuilder.Entity<Overtime>()
                 .HasOne(o => o.User)
                 .WithMany(u => u.Overtimes)
-                .HasForeignKey(o => o.UserId);
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Overtime>()
                 .HasOne(o => o.Substitution)
                 .WithMany(s => s.Overtimes)
-                .HasForeignKey(o => o.SubstitutionId);
+                .HasForeignKey(o => o.SubstitutionId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
