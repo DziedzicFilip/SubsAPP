@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260308115645_DataBaseStructue")]
-    partial class DataBaseStructue
+    [Migration("20260308122926_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,7 +116,7 @@ namespace Backend.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Group");
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Backend.API.Models.Overtime", b =>
@@ -146,7 +146,7 @@ namespace Backend.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Overtime");
+                    b.ToTable("Overtimes");
                 });
 
             modelBuilder.Entity("Backend.API.Models.Schedule", b =>
@@ -178,7 +178,7 @@ namespace Backend.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Schedule");
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("Backend.API.Models.Substitution", b =>
@@ -209,7 +209,7 @@ namespace Backend.API.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
-                    b.ToTable("Substitution");
+                    b.ToTable("Substitutions");
                 });
 
             modelBuilder.Entity("Backend.API.Models.SubstitutionGroup", b =>
@@ -232,7 +232,7 @@ namespace Backend.API.Migrations
 
                     b.HasIndex("SubstitutionId");
 
-                    b.ToTable("SubstitutionGroup");
+                    b.ToTable("SubstitutionGroups");
                 });
 
             modelBuilder.Entity("Backend.API.Models.SubstitutionNotification", b =>
@@ -262,7 +262,7 @@ namespace Backend.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SubstitutionNotification");
+                    b.ToTable("SubstitutionNotifications");
                 });
 
             modelBuilder.Entity("Backend.API.Models.SubstitutionTaken", b =>
@@ -288,7 +288,7 @@ namespace Backend.API.Migrations
 
                     b.HasIndex("TakenByUserId");
 
-                    b.ToTable("SubstitutionTaken");
+                    b.ToTable("SubstitutionTakens");
                 });
 
             modelBuilder.Entity("Backend.API.Models.User", b =>
@@ -320,7 +320,7 @@ namespace Backend.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Backend.API.Models.UserGroup", b =>
@@ -343,7 +343,7 @@ namespace Backend.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserGroup");
+                    b.ToTable("UserGroups");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -558,7 +558,7 @@ namespace Backend.API.Migrations
                     b.HasOne("Backend.API.Models.User", "User")
                         .WithMany("SubstitutionNotifications")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Substitution");
@@ -577,7 +577,7 @@ namespace Backend.API.Migrations
                     b.HasOne("Backend.API.Models.User", "TakenByUser")
                         .WithMany("SubstitutionTakens")
                         .HasForeignKey("TakenByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Substitution");

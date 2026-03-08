@@ -7,8 +7,19 @@ namespace Backend.API.Data
     public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
+        {}
+            public DbSet<Group> Groups { get; set; }
+            public DbSet<UserGroup> UserGroups { get; set; }
+            public DbSet<Schedule> Schedules { get; set; }
+            public DbSet<Substitution> Substitutions { get; set; }
+            public DbSet<SubstitutionGroup> SubstitutionGroups { get; set; }
+            public DbSet<SubstitutionNotification> SubstitutionNotifications { get; set; }
+            public DbSet<SubstitutionTaken> SubstitutionTakens { get; set; }
+            public DbSet<Overtime> Overtimes { get; set;}
+            public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+            public DbSet<User> Users { get; set; }
+
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,7 +72,8 @@ namespace Backend.API.Data
             modelBuilder.Entity<SubstitutionNotification>()
                 .HasOne(sn => sn.User)
                 .WithMany(u => u.SubstitutionNotifications)
-                .HasForeignKey(sn => sn.UserId);
+                .HasForeignKey(sn => sn.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             
             modelBuilder.Entity<SubstitutionTaken>()
@@ -72,7 +84,8 @@ namespace Backend.API.Data
             modelBuilder.Entity<SubstitutionTaken>()
                 .HasOne(st => st.TakenByUser)
                 .WithMany(u => u.SubstitutionTakens)
-                .HasForeignKey(st => st.TakenByUserId);
+                .HasForeignKey(st => st.TakenByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
           
             modelBuilder.Entity<Overtime>()
