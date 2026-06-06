@@ -1,35 +1,80 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import './App.css';
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface WeatherData {
+	date: string;
+	temperatureC: number;
+	temperatureF: number;
+	summary: string;
 }
 
-export default App
+function App() {
+	const [forecasts, setForecasts] = useState<WeatherData[]>([]);
+	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean>(true);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await fetch('api/weatherforecast');
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const data = await response.json();
+				setForecasts(data);
+			} catch (err) {
+				setError(err instanceof Error ? err.message : 'Unknown error');
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchData();
+	}, []);
+
+	// fetch('http://localhost:5000/api/weatherforecast')
+	// 	.then((response) => response.json())
+	// 	.then((data) => setForecasts(data));
+
+	return (
+		<div className='container'>
+			<h1>SubsAPP - Połączenie z Backendem .NET</h1>
+
+			<div className='card'>
+				{loading && <p>Ładowanie danych...</p>}
+				{error && <p style={{ color: 'red' }}>Błąd: {error}</p>}
+				{!error && !loading && (
+					<p>
+						Poniżej znajduje się tabela z danymi pogodowymi pobranymi z
+						backendowego API .NET. Każdy wiersz reprezentuje prognozę pogody na
+						dany dzień, zawierając datę, temperaturę w stopniach Celsjusza oraz
+						krótkie podsumowanie warunków pogodowych.
+					</p>
+				)}
+				<table
+					border={1}
+					style={{ width: '100%', marginTop: '10px', textAlign: 'left' }}
+				>
+					<thead>
+						<tr>
+							<th>Data</th>
+							<th>Temp (°C)</th>
+							<th>Podsumowanie</th>
+						</tr>
+					</thead>
+					<tbody>
+						{forecasts.map((f, index) => (
+							<tr key={index}>
+								<td>{new Date(f.date).toLocaleDateString()}</td>
+								<td>{f.temperatureC}°C</td>
+								<td>{f.summary}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	);
+}
+
+export default App;

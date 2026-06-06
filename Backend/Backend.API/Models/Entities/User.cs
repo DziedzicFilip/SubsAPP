@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-
-namespace Backend.API.Models
+using Microsoft.AspNetCore.Identity;
+namespace Backend.API.Models.Entities
 {
-    public class User
+    public class User : IdentityUser
     {
         public int Id { get; set; }
         public string Name { get; set; }

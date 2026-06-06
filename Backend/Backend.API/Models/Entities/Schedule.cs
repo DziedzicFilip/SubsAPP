@@ -1,11 +1,11 @@
 using System;
 
-namespace Backend.API.Models
+namespace Backend.API.Models.Entities
 {
     public class Schedule
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int GroupId { get; set; }
         public int DayOfWeek { get; set; }
         public TimeSpan StartTime { get; set; }

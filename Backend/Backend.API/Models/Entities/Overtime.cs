@@ -1,9 +1,9 @@
-namespace Backend.API.Models
+namespace Backend.API.Models.Entities
 {
     public class Overtime
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int SubstitutionId { get; set; }
         public float Hours { get; set; }
         public string Status { get; set; }

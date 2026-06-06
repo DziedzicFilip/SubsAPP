@@ -1,12 +1,12 @@
 using System;
 
-namespace Backend.API.Models
+namespace Backend.API.Models.Entities
 {
     public class SubstitutionNotification
     {
         public int Id { get; set; }
         public int SubstitutionId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string Status { get; set; }
         public DateTime SentAt { get; set; }
 

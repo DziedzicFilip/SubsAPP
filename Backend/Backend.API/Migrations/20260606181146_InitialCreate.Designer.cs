@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260308122926_InitialCreate")]
+    [Migration("20260606181146_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Backend.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Backend.API.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -34,12 +34,10 @@ namespace Backend.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -59,12 +57,10 @@ namespace Backend.API.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -74,6 +70,268 @@ namespace Backend.API.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApplicationUsers");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.Group", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.Overtime", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<float>("Hours")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubstitutionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubstitutionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Overtimes");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.Schedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Schedules");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.Substitution", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.ToTable("Substitutions");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.SubstitutionGroup", b =>
+                {
+                    b.Property<int>("SubstitutionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("SubstitutionId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("SubstitutionGroups");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.SubstitutionNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubstitutionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubstitutionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SubstitutionNotifications");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.SubstitutionTaken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SubstitutionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TakenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TakenByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubstitutionId");
+
+                    b.HasIndex("TakenByUserId");
+
+                    b.ToTable("SubstitutionTakens");
+                });
+
+            modelBuilder.Entity("Backend.API.Models.Entities.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -98,250 +356,20 @@ namespace Backend.API.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Group", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.UserGroup", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.Overtime", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<float>("Hours")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SubstitutionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubstitutionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Overtimes");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.Schedule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "GroupId");
 
                     b.HasIndex("GroupId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Schedules");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.Substitution", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.ToTable("Substitutions");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.SubstitutionGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubstitutionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("SubstitutionId");
-
-                    b.ToTable("SubstitutionGroups");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.SubstitutionNotification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SubstitutionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubstitutionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SubstitutionNotifications");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.SubstitutionTaken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("SubstitutionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TakenAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TakenByUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubstitutionId");
-
-                    b.HasIndex("TakenByUserId");
-
-                    b.ToTable("SubstitutionTakens");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Backend.API.Models.UserGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserGroups");
                 });
@@ -479,15 +507,15 @@ namespace Backend.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Overtime", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.Overtime", b =>
                 {
-                    b.HasOne("Backend.API.Models.Substitution", "Substitution")
+                    b.HasOne("Backend.API.Models.Entities.Substitution", "Substitution")
                         .WithMany("Overtimes")
                         .HasForeignKey("SubstitutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.API.Models.User", "User")
+                    b.HasOne("Backend.API.Models.Entities.User", "User")
                         .WithMany("Overtimes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -498,15 +526,15 @@ namespace Backend.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Schedule", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.Schedule", b =>
                 {
-                    b.HasOne("Backend.API.Models.Group", "Group")
+                    b.HasOne("Backend.API.Models.Entities.Group", "Group")
                         .WithMany("Schedules")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.API.Models.User", "User")
+                    b.HasOne("Backend.API.Models.Entities.User", "User")
                         .WithMany("Schedules")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -517,9 +545,9 @@ namespace Backend.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Substitution", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.Substitution", b =>
                 {
-                    b.HasOne("Backend.API.Models.User", "CreatedByUser")
+                    b.HasOne("Backend.API.Models.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -528,15 +556,15 @@ namespace Backend.API.Migrations
                     b.Navigation("CreatedByUser");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.SubstitutionGroup", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.SubstitutionGroup", b =>
                 {
-                    b.HasOne("Backend.API.Models.Group", "Group")
+                    b.HasOne("Backend.API.Models.Entities.Group", "Group")
                         .WithMany("SubstitutionGroups")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.API.Models.Substitution", "Substitution")
+                    b.HasOne("Backend.API.Models.Entities.Substitution", "Substitution")
                         .WithMany("SubstitutionGroups")
                         .HasForeignKey("SubstitutionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -547,15 +575,15 @@ namespace Backend.API.Migrations
                     b.Navigation("Substitution");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.SubstitutionNotification", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.SubstitutionNotification", b =>
                 {
-                    b.HasOne("Backend.API.Models.Substitution", "Substitution")
+                    b.HasOne("Backend.API.Models.Entities.Substitution", "Substitution")
                         .WithMany("SubstitutionNotifications")
                         .HasForeignKey("SubstitutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.API.Models.User", "User")
+                    b.HasOne("Backend.API.Models.Entities.User", "User")
                         .WithMany("SubstitutionNotifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -566,15 +594,15 @@ namespace Backend.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.SubstitutionTaken", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.SubstitutionTaken", b =>
                 {
-                    b.HasOne("Backend.API.Models.Substitution", "Substitution")
+                    b.HasOne("Backend.API.Models.Entities.Substitution", "Substitution")
                         .WithMany("SubstitutionTakens")
                         .HasForeignKey("SubstitutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.API.Models.User", "TakenByUser")
+                    b.HasOne("Backend.API.Models.Entities.User", "TakenByUser")
                         .WithMany("SubstitutionTakens")
                         .HasForeignKey("TakenByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -585,15 +613,15 @@ namespace Backend.API.Migrations
                     b.Navigation("TakenByUser");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.UserGroup", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.UserGroup", b =>
                 {
-                    b.HasOne("Backend.API.Models.Group", "Group")
+                    b.HasOne("Backend.API.Models.Entities.Group", "Group")
                         .WithMany("UserGroups")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.API.Models.User", "User")
+                    b.HasOne("Backend.API.Models.Entities.User", "User")
                         .WithMany("UserGroups")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -615,7 +643,7 @@ namespace Backend.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Backend.API.Models.ApplicationUser", null)
+                    b.HasOne("Backend.API.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -624,7 +652,7 @@ namespace Backend.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Backend.API.Models.ApplicationUser", null)
+                    b.HasOne("Backend.API.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -639,7 +667,7 @@ namespace Backend.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.API.Models.ApplicationUser", null)
+                    b.HasOne("Backend.API.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -648,14 +676,14 @@ namespace Backend.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Backend.API.Models.ApplicationUser", null)
+                    b.HasOne("Backend.API.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Group", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.Group", b =>
                 {
                     b.Navigation("Schedules");
 
@@ -664,7 +692,7 @@ namespace Backend.API.Migrations
                     b.Navigation("UserGroups");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.Substitution", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.Substitution", b =>
                 {
                     b.Navigation("Overtimes");
 
@@ -675,7 +703,7 @@ namespace Backend.API.Migrations
                     b.Navigation("SubstitutionTakens");
                 });
 
-            modelBuilder.Entity("Backend.API.Models.User", b =>
+            modelBuilder.Entity("Backend.API.Models.Entities.User", b =>
                 {
                     b.Navigation("Overtimes");
 
