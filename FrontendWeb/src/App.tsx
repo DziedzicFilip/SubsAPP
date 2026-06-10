@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useWeatherForecastHook } from './hooks/useWetherForecastHook';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+	const { forecasts, error, loading } = useWeatherForecastHook();
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	return (
+		<div className='container'>
+			<h1>SubsAPP - Połączenie z Backendem .NET</h1>
+
+			<div className='card'>
+				{loading && <p>Ładowanie danych...</p>}
+				{error && <p style={{ color: 'red' }}>Błąd: {error.message}</p>}
+				{!error && !loading && (
+					<p>
+						Poniżej znajduje się tabela z danymi pogodowymi pobranymi z
+						backendowego API .NET. Każdy wiersz reprezentuje prognozę pogody na
+						dany dzień, zawierając datę, temperaturę w stopniach Celsjusza oraz
+						krótkie podsumowanie warunków pogodowych.
+					</p>
+				)}
+				<table
+					border={1}
+					style={{ width: '100%', marginTop: '10px', textAlign: 'left' }}
+				>
+					<thead>
+						<tr>
+							<th>Data</th>
+							<th>Temp (°C)</th>
+							<th>Podsumowanie</th>
+						</tr>
+					</thead>
+					<tbody>
+						{forecasts.map((f, index) => (
+							<tr key={index}>
+								<td>{new Date(f.date).toLocaleDateString()}</td>
+								<td>{f.temperatureC}°C</td>
+								<td>{f.summary}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	);
 }
 
-export default App
+export default App;

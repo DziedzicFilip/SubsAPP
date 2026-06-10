@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace Backend.API.Models
+namespace Backend.API.Models.Entities
 {
     public class Substitution
     {
         public int Id { get; set; }
-        public int CreatedByUserId { get; set; }
+        public string CreatedByUserId { get; set; }
         public DateTime Date { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }

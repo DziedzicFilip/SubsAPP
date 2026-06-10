@@ -1,12 +1,12 @@
 using System;
 
-namespace Backend.API.Models
+namespace Backend.API.Models.Entities
 {
     public class SubstitutionTaken
     {
         public int Id { get; set; }
         public int SubstitutionId { get; set; }
-        public int TakenByUserId { get; set; }
+        public string TakenByUserId { get; set; }
         public DateTime TakenAt { get; set; }
 
         public Substitution Substitution { get; set; }
