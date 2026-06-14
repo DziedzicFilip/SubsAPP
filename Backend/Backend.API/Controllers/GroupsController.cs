@@ -1,6 +1,6 @@
 using Backend.API.Services.Groups;
 using Microsoft.AspNetCore.Mvc;
-using Backend.API.Models.Entities;
+using Backend.API.Models.DTOs;
 
 namespace Backend.API.Controllers
 {
@@ -15,7 +15,7 @@ namespace Backend.API.Controllers
                 _groupsService = groupsService;
             }
             [HttpPost("CreateGroup")]
-            public async Task<IActionResult> CreateGroup([FromBody] Group group)
+            public async Task<IActionResult> CreateGroup([FromBody] GroupDTO group)
             {
                 return await _groupsService.CreateGroupAsync(group.Name, group.Description);
             }

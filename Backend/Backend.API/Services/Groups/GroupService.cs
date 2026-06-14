@@ -1,4 +1,5 @@
 using Backend.API.Models.Entities;
+using Backend.API.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Backend.API.Data;
 using Microsoft.AspNetCore.Mvc;
