@@ -8,16 +8,56 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Backend.API.Services.Auth;
+using Backend.API.Services.Groups;
+using Backend.API.Services.Token;
+using System.IO;
 
-Env.Load();
+var dir = new DirectoryInfo(AppContext.BaseDirectory);
+string? foundEnv = null;
+while (dir != null)
+{
+    var candidate = Path.Combine(dir.FullName, ".env");
+    if (File.Exists(candidate))
+    {
+        foundEnv = candidate;
+        break;
+    }
+    dir = dir.Parent;
+}
+
+if (foundEnv != null)
+{
+    Env.Load(foundEnv);
+    Console.WriteLine($"Loaded .env from: {foundEnv}");
+}
+else
+{
+    Console.WriteLine("Warning: .env not found in parent folders. Make sure JWT_SECRET is set in environment or appsettings.");
+}
+
 
 
 var builder = WebApplication.CreateBuilder(args);
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 
-var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? builder.Configuration["Jwt:Secret"];
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+//Console.WriteLine($"Polaczono z baza za pomoca: {connectionString}");
+if (string.IsNullOrWhiteSpace(jwtSecret))
+{
+    throw new InvalidOperationException("JWT_SECRET is missing. Add it to d:\\Projekty\\SubsAPP\\Backend\\.env or appsettings.");
+}
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("DB_CONNECTION_STRING is missing. Add it to d:\\Projekty\\SubsAPP\\Backend\\.env.");
+}
+
+builder.Services.AddScoped<IGroupsService, GroupService>();
+builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<IAuthService,AuthService>();
 
 builder.Services.AddControllers();
 //builder.Services.AddOpenApi();
@@ -73,7 +113,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString)
+        .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -107,7 +148,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+    var httpsPort = Environment.GetEnvironmentVariable("ASPNETCORE_HTTPS_PORT");
+    if (!string.IsNullOrWhiteSpace(httpsPort))
+    {
+        app.UseHttpsRedirection();
+    }
 
 app.UseCors("DevCors");
 app.UseAuthentication();

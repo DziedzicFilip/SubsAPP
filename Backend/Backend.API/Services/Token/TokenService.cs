@@ -25,10 +25,17 @@ namespace Backend.API.Services.Token
         }
         public async Task<string> GenerateToken(User user)
         {
+          
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["Secret"];
+            if (!jwtSettings.Exists()) jwtSettings = _configuration.GetSection("Jwt");
+            var secretKey = jwtSettings["Secret"] ?? Environment.GetEnvironmentVariable("JWT_SECRET");
             var issuer = jwtSettings["Issuer"];
             var audience = jwtSettings["Audience"];
+
+            if (string.IsNullOrWhiteSpace(secretKey))
+            {
+                throw new InvalidOperationException("JWT secret is not configured. Set Jwt:Secret in configuration or JWT_SECRET environment variable.");
+            }
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

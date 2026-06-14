@@ -13,9 +13,9 @@ namespace Backend.API.Services.Auth
 
          readonly private UserManager<User> _userManager;
          readonly private SignInManager<User> _signInManager;
-         private readonly TokenService _tokenService;
+         private readonly ITokenService _tokenService;
 
-        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, TokenService tokenService)
+        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
