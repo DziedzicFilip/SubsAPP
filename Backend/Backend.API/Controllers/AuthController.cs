@@ -31,6 +31,11 @@ namespace Backend.API.Controllers
                 return BadRequest("Invalid login request.");
             }
 
+            if ( result.IsSuccess == false)
+            {
+                return BadRequest("Invalid login credentials.");
+            }
+
             return Ok(result);
 
         }

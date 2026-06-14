@@ -13,11 +13,29 @@ using Backend.API.Services.Groups;
 using Backend.API.Services.Token;
 using System.IO;
 
-var envPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())!.FullName, ".env");
-if (File.Exists(envPath))
+var dir = new DirectoryInfo(AppContext.BaseDirectory);
+string? foundEnv = null;
+while (dir != null)
 {
-    Env.Load(envPath);
+    var candidate = Path.Combine(dir.FullName, ".env");
+    if (File.Exists(candidate))
+    {
+        foundEnv = candidate;
+        break;
+    }
+    dir = dir.Parent;
 }
+
+if (foundEnv != null)
+{
+    Env.Load(foundEnv);
+    Console.WriteLine($"Loaded .env from: {foundEnv}");
+}
+else
+{
+    Console.WriteLine("Warning: .env not found in parent folders. Make sure JWT_SECRET is set in environment or appsettings.");
+}
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +44,7 @@ var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? builder.Configuration["Jwt:Secret"];
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-Console.WriteLine($"Polaczono z baza za pomoca: {connectionString}");
+//Console.WriteLine($"Polaczono z baza za pomoca: {connectionString}");
 if (string.IsNullOrWhiteSpace(jwtSecret))
 {
     throw new InvalidOperationException("JWT_SECRET is missing. Add it to d:\\Projekty\\SubsAPP\\Backend\\.env or appsettings.");
