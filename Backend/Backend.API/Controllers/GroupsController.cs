@@ -15,7 +15,7 @@ namespace Backend.API.Controllers
                 _groupsService = groupsService;
             }
             [HttpPost("CreateGroup")]
-            public async Task<IActionResult> CreateGroup([FromBody] GroupDTO group)
+            public async Task<IActionResult> CreateGroup([FromBody] CreateGroupDTO group)
             {
                 return await _groupsService.CreateGroupAsync(group.Name, group.Description);
             }
