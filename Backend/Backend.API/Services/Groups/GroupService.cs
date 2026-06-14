@@ -38,6 +38,56 @@ namespace Backend.API.Services.Groups
                     return new OkResult();
             }
 
+            public async Task<IActionResult> DeleteGroupAsync(int inputId)
+            {
+                var group = await _dbContext.Groups.FindAsync(inputId);
+                if (group == null)
+                {
+                    return new NotFoundResult();
+                }
+                
+
+                _dbContext.Groups.Remove(group);
+                await _dbContext.SaveChangesAsync();
+
+                return new OkResult();
+            }
+
+            public async Task<IActionResult> UpdateGroupAsync(int inputId, string inputName, string inputDescription)
+            {
+                var group = await _dbContext.Groups.FindAsync(inputId);
+                if(group == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                group.Name = inputName;
+                group.Description = inputDescription;
+
+                _dbContext.Groups.Update(group);
+                await _dbContext.SaveChangesAsync();
+
+                return new OkResult();
+            }
+            
+            public async Task<IActionResult> GetGroupAsync(int inputId)
+            {
+                var group = await _dbContext.Groups.FindAsync(inputId);
+                if(group == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return new OkObjectResult(group);
+            }
+
+            public async Task<IActionResult> GetListOfGroupAsync()
+            {
+                var groups = await _dbContext.Groups.ToListAsync();
+                return new OkObjectResult(groups);
+            }
     }
+
+
 
 }
