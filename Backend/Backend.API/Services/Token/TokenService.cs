@@ -23,7 +23,7 @@ namespace Backend.API.Services.Token
             _configuration = configuration;
             _userManager = userManager;
         }
-        public async Task<AuthResponseDTO> GenerateToken(User user)
+        public async Task<string> GenerateToken(User user)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["Secret"];
@@ -54,19 +54,7 @@ namespace Backend.API.Services.Token
                 expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: credentials
             );
-            return new AuthResponseDTO
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = token.ValidTo,
-                User = new UserResponseDTO
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Role =  userRole
-                }
-            };
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
         }
     }
-}

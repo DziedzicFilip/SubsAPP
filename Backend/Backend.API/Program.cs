@@ -115,4 +115,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using ( var scope = app.Services.CreateScope() )
+{
+    var services = scope.ServiceProvider;
+    try 
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        await context.Database.MigrateAsync();
+
+        Console.WriteLine("Database migrated successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error occurred while migrating database: {ex.Message}");
+    }
+}
+
 app.Run();

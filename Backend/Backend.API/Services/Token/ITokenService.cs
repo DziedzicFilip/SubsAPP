@@ -8,6 +8,6 @@ namespace Backend.API.Services.Token
 {
     public interface ITokenService
     {
-         Task<AuthResponseDTO> GenerateToken(User user);
+         Task<string> GenerateToken(User user);
     }
 }
