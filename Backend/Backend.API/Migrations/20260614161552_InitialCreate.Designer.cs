@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260608183711_InitialCreate")]
+    [Migration("20260614161552_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Backend.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.16")
+                .HasAnnotation("ProductVersion", "9.0.17")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -352,6 +352,46 @@ namespace Backend.API.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "86cae99f-9cc3-46f1-90f3-c75cf0487e5d",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@twojadomena.pl",
+                            EmailConfirmed = true,
+                            FirstName = "Jan",
+                            LastName = "Kowalski",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@TWOJADOMENA.PL",
+                            NormalizedUserName = "ADMIN@TWOJADOMENA.PL",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHPXIX2NZGWxeuxKh/c0ukuC5hLtSLPkmz2B/PRbSYMYkunee79MbpvTSmJepySsTA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "96e7c772-a885-458a-ad25-6438eac9fb7b",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@twojadomena.pl"
+                        },
+                        new
+                        {
+                            Id = "b72ce8d1-bb76-4bf9-cd28-11ce0455f686",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "283b0146-f1a8-48ba-9f51-6b256778ef9f",
+                            CreatedAt = new DateTime(2026, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "user@twojadomena.pl",
+                            EmailConfirmed = true,
+                            FirstName = "Anna",
+                            LastName = "Nowak",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER@TWOJADOMENA.PL",
+                            NormalizedUserName = "USER@TWOJADOMENA.PL",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKztEMdrmO1MAPDNgB3mTmiZyzgMSr/DlXb4MQE8ThdUC7CE99HCbRv60oKkFeuKkw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "71d20b73-93f8-43a5-a266-bb5448fb5acc",
+                            TwoFactorEnabled = false,
+                            UserName = "user@twojadomena.pl"
+                        });
                 });
 
             modelBuilder.Entity("Backend.API.Models.Entities.UserGroup", b =>
