@@ -16,7 +16,7 @@ namespace Backend.API.Controllers
                 _groupsService = groupsService;
             }
 
-           
+            [Authorize]
             [HttpPost("Group")]
             public async Task<IActionResult> CreateGroup([FromBody] CreateUpdateGroupDTO group)
             {
@@ -24,7 +24,7 @@ namespace Backend.API.Controllers
                 return await _groupsService.CreateGroupAsync(group.Name, group.Description);
 
             }
-            
+             [Authorize]
             [HttpDelete("Group/{id}")]
             public async Task<IActionResult> DeleteGroup(int id)
             {
@@ -33,7 +33,7 @@ namespace Backend.API.Controllers
 
 
             }
-           
+             [Authorize]
             [HttpGet("Group/{id}")]
             public async Task<IActionResult> GetGroup(int id)
             {
@@ -41,7 +41,7 @@ namespace Backend.API.Controllers
                 return await _groupsService.GetGroupAsync(id);
 
             }
-            
+             [Authorize]
             [HttpPatch("Group/{id}")]
             public async Task<IActionResult> UpdateGroup(int id, [FromBody] CreateUpdateGroupDTO group)
             {
@@ -50,6 +50,7 @@ namespace Backend.API.Controllers
 
             }
             
+            [Authorize]
             [HttpGet("Groups")]
             public async Task<IActionResult> GetListOfGroups()
             {
