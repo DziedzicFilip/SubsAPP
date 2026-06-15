@@ -11,80 +11,157 @@ namespace Backend.API.Services.Groups
     {
 
             private readonly AppDbContext  _dbContext;
+            private readonly ILogger<GroupService> _logger;
 
-            public GroupService (AppDbContext dbContext)
+            public GroupService (AppDbContext dbContext, ILogger<GroupService> logger)
             {
                 _dbContext = dbContext;
+                _logger = logger;
             }
 
             public async Task<IActionResult> CreateGroupAsync(string inputName, string inputDescription)
             {
+                 try 
+                    {
                     var group = new Group
                     {
                         Name = inputName,
                         Description = inputDescription
                     };
 
-                    try 
-                    {
+                   
                         _dbContext.Groups.Add(group);
                         await _dbContext.SaveChangesAsync();
+                        _logger.LogInformation($"Group created: {group.Name} (ID: {group.Id})");
+                            return new OkResult();
                     }
-                    catch (Exception)
+                    catch (DbUpdateException ex)
                     {
-                        return new BadRequestResult();
+                     _logger.LogWarning(ex, "DbUpdateException occurred while creating group {GroupName}.", inputName);
+                        return new BadRequestObjectResult("Cannot create group. Ensure data constraints are met (e.g. unique name).");
+                    }
+                    catch (Exception ex)
+                    {
+                      _logger.LogError(ex, "An unexpected error occurred while creating a group.");
+                        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                     }
 
-                    return new OkResult();
+                    
             }
 
             public async Task<IActionResult> DeleteGroupAsync(int inputId)
             {
-                var group = await _dbContext.Groups.FindAsync(inputId);
-                if (group == null)
-                {
-                    return new NotFoundResult();
+
+                try{
+                    
+                    var group = await _dbContext.Groups.FindAsync(inputId);
+
+                    if(group == null)
+                    {
+                        _logger.LogWarning($"Attempted to delete non-existent group with ID {inputId}.");
+                        return new NotFoundResult();
+                    }
+                    
+                    _dbContext.Groups.Remove(group);
+                    
+                    await _dbContext.SaveChangesAsync();
+
+                    _logger.LogInformation($"Group deleted: {group.Name} (ID: {group.Id})");
+                    return new OkResult();
                 }
+                catch (DbUpdateException ex)
+                    {
+                        _logger.LogError(ex, "Database error occurred while deleting group ID {GroupId}.", inputId);
+                        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "An unexpected error occurred.");
+                        return new BadRequestResult();
+                    }
+
+                   
+
                 
 
-                _dbContext.Groups.Remove(group);
-                await _dbContext.SaveChangesAsync();
-
-                return new OkResult();
+                
             }
 
             public async Task<IActionResult> UpdateGroupAsync(int inputId, string inputName, string inputDescription)
             {
-                var group = await _dbContext.Groups.FindAsync(inputId);
-                if(group == null)
+
+                try{
+                        var group = await _dbContext.Groups.FindAsync(inputId);
+
+                        if(group == null)
+                        {
+                            _logger.LogWarning($"Attempted to update non-existent group with ID {inputId}.");
+                            return new NotFoundResult();
+                        }
+
+                        group.Name = inputName;
+                        group.Description = inputDescription;
+
+                        _dbContext.Groups.Update(group);
+                        await _dbContext.SaveChangesAsync();
+
+                         _logger.LogInformation($"Group updated: {group.Name} (ID: {group.Id})");
+                
+                        return new OkResult();
+                }
+                catch (DbUpdateException ex)
                 {
-                    return new NotFoundResult();
+                   _logger.LogWarning(ex, "DbUpdateException occurred while updating group ID {GroupId}.", inputId);
+                    return new BadRequestObjectResult("Cannot update group. Ensure data constraints are met.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An unexpected error occurred while updating group ID {GroupId}.", inputId);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 }
 
-                group.Name = inputName;
-                group.Description = inputDescription;
-
-                _dbContext.Groups.Update(group);
-                await _dbContext.SaveChangesAsync();
-
-                return new OkResult();
+                
             }
             
             public async Task<IActionResult> GetGroupAsync(int inputId)
             {
-                var group = await _dbContext.Groups.FindAsync(inputId);
-                if(group == null)
+                try{
+                         var group = await _dbContext.Groups.FindAsync(inputId);
+
+                        if(group == null)
+                        {
+                            _logger.LogWarning($"Attempted to retrieve non-existent group with ID {inputId}.");
+                            return new NotFoundResult();
+                        }
+
+                         _logger.LogInformation($"Group retrieved: {group.Name} (ID: {group.Id})");
+                            return new OkObjectResult(group);
+                }
+                catch (Exception ex)
                 {
-                    return new NotFoundResult();
+                    _logger.LogError(ex, "An unexpected error occurred while retrieving group ID {GroupId}.", inputId);
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 }
 
-                return new OkObjectResult(group);
+               
             }
 
             public async Task<IActionResult> GetListOfGroupAsync()
             {
-                var groups = await _dbContext.Groups.ToListAsync();
-                return new OkObjectResult(groups);
+                try{
+
+                    var groups = await _dbContext.Groups.ToListAsync();
+                    _logger.LogInformation($"Groups retrieved: {groups.Count} groups found.");
+                    return new OkObjectResult(groups);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An unexpected error occurred while retrieving groups list.");
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                }
+
+                 
             }
     }
 

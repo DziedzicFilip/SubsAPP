@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 using Backend.API.Services.Auth;
 using Backend.API.Services.Groups;
 using Backend.API.Services.Token;
-using System.IO;
+
 
 var dir = new DirectoryInfo(AppContext.BaseDirectory);
 string? foundEnv = null;
@@ -44,15 +44,14 @@ var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? builder.Configuration["Jwt:Secret"];
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-//Console.WriteLine($"Polaczono z baza za pomoca: {connectionString}");
 if (string.IsNullOrWhiteSpace(jwtSecret))
 {
-    throw new InvalidOperationException("JWT_SECRET is missing. Add it to d:\\Projekty\\SubsAPP\\Backend\\.env or appsettings.");
+    throw new InvalidOperationException("JWT_SECRET is missing.");
 }
 
 if (string.IsNullOrWhiteSpace(connectionString))
 {
-    throw new InvalidOperationException("DB_CONNECTION_STRING is missing. Add it to d:\\Projekty\\SubsAPP\\Backend\\.env.");
+    throw new InvalidOperationException("DB_CONNECTION_STRING is missing.");
 }
 
 builder.Services.AddScoped<IGroupsService, GroupService>();
@@ -135,6 +134,28 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //expireTime = TimeSpan.FromMinutes(30),
             ClockSkew = TimeSpan.Zero
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning("Authentication failed: {Message}", context.Exception?.Message);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                var userName = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+                logger.LogInformation("Token validated for user: {UserName}", userName);
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning("Authorization challenge: {Error}", context.ErrorDescription ?? "No token provided");
+                return Task.CompletedTask;
+            }
+        };
    });
 var app = builder.Build();
 
@@ -144,7 +165,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "SubsAPP API V1");
-        options.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+        options.RoutePrefix = string.Empty; 
     });
 }
 
