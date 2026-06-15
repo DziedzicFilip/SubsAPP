@@ -58,6 +58,8 @@ namespace Backend.API.Services.Auth
 
             var token = await _tokenService.GenerateToken(user);
             _logger.LogInformation("User {Email} logged in successfully.", request.Email);
+            var userRole = await _userManager.GetRolesAsync(user);
+            
             return new AuthResponseDTO{
                 IsSuccess = true,
                 Message = "Login successful.",
@@ -69,6 +71,7 @@ namespace Backend.API.Services.Auth
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
+                    Role = userRole.FirstOrDefault()
                    
 
                 }
