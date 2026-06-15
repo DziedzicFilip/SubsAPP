@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Backend.API.Models;
 using Backend.API.Models.Entities;
+using Backend.API.Models.Configuations;
 
 namespace Backend.API.Data
 {

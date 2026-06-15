@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Backend.API.Services.Auth;
 using Backend.API.Services.Groups;
 using Backend.API.Services.Token;
+using Backend.API.Models.Configuations;
 
 
 var dir = new DirectoryInfo(AppContext.BaseDirectory);
@@ -117,14 +118,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();   
+    .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -193,13 +189,13 @@ using ( var scope = app.Services.CreateScope() )
     {
         var context = services.GetRequiredService<AppDbContext>();
         await context.Database.MigrateAsync();
-
         Console.WriteLine("Database migrated successfully.");
+
+        await DataSeeder.SeedAsync(services);
     }
     catch (Exception ex)
     {
         Console.WriteLine($"Error occurred while migrating database: {ex.Message}");
     }
 }
-
-app.Run();
+app.Run();
