@@ -60,7 +60,6 @@ builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddScoped<IAuthService,AuthService>();
 
 builder.Services.AddControllers();
-//builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -204,4 +203,4 @@ using ( var scope = app.Services.CreateScope() )
         Console.WriteLine($"Error occurred while migrating database: {ex.Message}");
     }
 }
-app.Run();
+app.Run();

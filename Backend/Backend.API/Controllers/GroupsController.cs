@@ -19,7 +19,7 @@ namespace Backend.API.Controllers
 
          
             [HttpPost("Group")]
-            public async Task<IActionResult> CreateGroup([FromBody] CreateUpdateGroupDTO group)
+            public async Task<IActionResult> CreateGroup([FromBody] CreateGroupDTO group)
             {
 
                 return await _groupsService.CreateGroupAsync(group.Name, group.Description);
@@ -44,7 +44,7 @@ namespace Backend.API.Controllers
             }
            
             [HttpPatch("Group/{id}")]
-            public async Task<IActionResult> UpdateGroup(int id, [FromBody] CreateUpdateGroupDTO group)
+            public async Task<IActionResult> UpdateGroup(int id, [FromBody] UpdateGroupDTO group)
             {
 
                 return await _groupsService.UpdateGroupAsync(id, group.Name, group.Description);
