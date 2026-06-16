@@ -1,10 +1,13 @@
 using Backend.API.Services.Groups;
 using Microsoft.AspNetCore.Mvc;
 using Backend.API.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.API.Controllers
 {
 
+   
+     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class GroupsController : ControllerBase
@@ -14,11 +17,55 @@ namespace Backend.API.Controllers
             {
                 _groupsService = groupsService;
             }
-            [HttpPost("CreateGroup")]
+
+             [Authorize(Roles = "Admin")]
+            [HttpPost("Group")]
             public async Task<IActionResult> CreateGroup([FromBody] CreateGroupDTO group)
             {
+
                 return await _groupsService.CreateGroupAsync(group.Name, group.Description);
+
             }
+             [Authorize(Roles = "Admin")]
+            [HttpDelete("Group/{id}")]
+            public async Task<IActionResult> DeleteGroup(int id)
+            {
+
+                return await _groupsService.DeleteGroupAsync(id);
+
+
+            }
+            
+            [HttpGet("Group/{id}")]
+            public async Task<IActionResult> GetGroup(int id)
+            {
+
+                return await _groupsService.GetGroupAsync(id);
+
+            }
+           
+             [Authorize(Roles = "Admin")]
+            [HttpPatch("Group/{id}")]
+            public async Task<IActionResult> UpdateGroup(int id, [FromBody] UpdateGroupDTO group)
+            {
+
+                return await _groupsService.UpdateGroupAsync(id, group.Name, group.Description);
+
+            }
+            
+           
+            [HttpGet("Groups")]
+            public async Task<IActionResult> GetListOfGroups()
+            {
+
+                return await _groupsService.GetListOfGroupAsync();
+
+
+            }
+
+
     }
+
+
 
 }

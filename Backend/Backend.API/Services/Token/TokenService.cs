@@ -17,11 +17,13 @@ namespace Backend.API.Services.Token
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<TokenService> _llogger;    
 
-        public TokenService(IConfiguration configuration, UserManager<User> userManager)
+        public TokenService(IConfiguration configuration, UserManager<User> userManager, ILogger<TokenService> logger)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _llogger = logger;
         }
         public async Task<string> GenerateToken(User user)
         {
@@ -42,6 +44,7 @@ namespace Backend.API.Services.Token
 
             var roles = await _userManager.GetRolesAsync(user);
             var userRole = roles.FirstOrDefault() ?? "User";
+            _llogger.LogInformation($"Generating token for user {user.UserName} with role {userRole}.");
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),

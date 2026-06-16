@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Backend.API.Models;
 using Backend.API.Models.Entities;
-using Backend.API.Models.Configurations;
+using Backend.API.Models.Configuations;
+
 namespace Backend.API.Data
 {
     public class AppDbContext : IdentityDbContext<User>
@@ -26,7 +27,7 @@ namespace Backend.API.Data
 {
     base.OnModelCreating(modelBuilder);
     
-    modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    
     
     modelBuilder.Entity<UserGroup>()
         .HasKey(ug => new { ug.UserId, ug.GroupId });
