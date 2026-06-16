@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace Backend.API.Controllers
 {
 
-    [Authorize(Roles = "Admin")]
+   
+     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class GroupsController : ControllerBase
@@ -17,7 +18,7 @@ namespace Backend.API.Controllers
                 _groupsService = groupsService;
             }
 
-         
+             [Authorize(Roles = "Admin")]
             [HttpPost("Group")]
             public async Task<IActionResult> CreateGroup([FromBody] CreateGroupDTO group)
             {
@@ -25,7 +26,7 @@ namespace Backend.API.Controllers
                 return await _groupsService.CreateGroupAsync(group.Name, group.Description);
 
             }
-            
+             [Authorize(Roles = "Admin")]
             [HttpDelete("Group/{id}")]
             public async Task<IActionResult> DeleteGroup(int id)
             {
@@ -43,6 +44,7 @@ namespace Backend.API.Controllers
 
             }
            
+             [Authorize(Roles = "Admin")]
             [HttpPatch("Group/{id}")]
             public async Task<IActionResult> UpdateGroup(int id, [FromBody] UpdateGroupDTO group)
             {
@@ -51,7 +53,7 @@ namespace Backend.API.Controllers
 
             }
             
-            
+           
             [HttpGet("Groups")]
             public async Task<IActionResult> GetListOfGroups()
             {
