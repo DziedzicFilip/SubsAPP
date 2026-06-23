@@ -95,7 +95,3 @@ The API uses JWT Bearer tokens. To access protected endpoints:
 Tokens expire after **1 hour**.
 
 ---
-
-## License
-
-This project is private and not licensed for public distributio for now.
