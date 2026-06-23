@@ -749,3 +749,8 @@ buck-out/
 .buckd/
 .buckversion
 .fakebuckversion
+
+
+API_ENDPOINTS.md
+DATABASE_MODEL.md
+DATABASE_MODEL.md
