@@ -29,7 +29,11 @@ namespace Backend.API.Services.Groups
                         Description = inputDescription
                     };
 
-                   
+                    if (await _dbContext.Groups.AnyAsync(g => g.Name == inputName))
+                    {
+                        _logger.LogWarning($"Attempted to create a group with a duplicate name: {inputName}.");
+                        return new BadRequestObjectResult("A group with this name already exists.");
+                    }
                         _dbContext.Groups.Add(group);
                         await _dbContext.SaveChangesAsync();
                         _logger.LogInformation($"Group created: {group.Name} (ID: {group.Id})");
@@ -98,6 +102,13 @@ namespace Backend.API.Services.Groups
                             _logger.LogWarning($"Attempted to update non-existent group with ID {inputId}.");
                             return new NotFoundResult();
                         }
+                        
+                        if (await _dbContext.Groups.AnyAsync(g => g.Name == inputName && g.Id != inputId))
+                        {
+                            _logger.LogWarning($"Attempted to update group ID {inputId} with a duplicate name: {inputName}.");
+                            return new BadRequestObjectResult("A group with this name already exists.");
+                        }
+
 
                         group.Name = inputName;
                         group.Description = inputDescription;
