@@ -41,7 +41,15 @@ namespace Backend.API.Services.Auth
                         };
                     }
               
-            
+                    if (!user.IsActive)
+                    {
+                        _logger.LogWarning("Login attempt failed: User with email {Email} is inactive.", request.Email);
+                        return new AuthResponseDTO
+                        {
+                            IsSuccess = false,
+                            Message = "User account is inactive. Please contact support."
+                        };
+                    }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password,false);
             

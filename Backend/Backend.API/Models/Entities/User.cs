@@ -13,6 +13,10 @@ namespace Backend.API.Models.Entities
        // public string Role { get; set; }
         public DateTime CreatedAt { get; set; }
 
+        public DateTime UpdatedAt { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
         public ICollection<UserGroup> UserGroups { get; set; }
         public ICollection<Schedule> Schedules { get; set; }
         public ICollection<SubstitutionNotification> SubstitutionNotifications { get; set; }
