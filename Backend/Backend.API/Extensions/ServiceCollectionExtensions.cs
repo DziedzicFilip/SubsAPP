@@ -9,6 +9,7 @@ using Backend.API.Models.Entities;
 using Backend.API.Services.Auth;
 using Backend.API.Services.Groups;
 using Backend.API.Services.Token;
+using Backend.API.Services.UserService;
 
 namespace Backend.API.Extensions;
 
@@ -20,6 +21,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGroupsService, GroupService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
